@@ -1,3 +1,4 @@
+from lib.publicKey import PublicKey
 from lib.utils import bytes_to_base64_url
 
 
@@ -14,6 +15,7 @@ class AuthData:
             raw[53:55], byteorder='big')
         self.credential_id = bytes_to_base64_url(
             raw[55:55 + credential_id_length])
+        self.pub_key = PublicKey(raw[55 + credential_id_length:])
 
     def dump(self):
         return {
@@ -29,7 +31,9 @@ class AuthData:
                 'ED': (128 & int.from_bytes(self.flags, byteorder='big')) == 128,
             },
             'signCount': self.sign_count,
-            'aaguid': self.aaguid,
-            'credential_id': self.credential_id,
-            'public_key': 'public key....'
+            'attestedCredentialData': {
+                'aaguid': self.aaguid,
+                'credential_id': self.credential_id,
+                'public_key': self.pub_key.dump()
+            }
         }
