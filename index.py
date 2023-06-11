@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 from flask import Flask, render_template, request
 
@@ -85,4 +86,5 @@ def attestation_result():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    run_mode = sys.argv[1]
+    app.run(debug=True if run_mode == 'prod' else False, port=8000)
