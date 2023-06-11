@@ -44,7 +44,7 @@ class Packed(AttestationStatement):
         self.raw = raw
 
     def dump(self):
-        return ''
+        return 'TBD...'
 
 
 class AndroidSafetyNet(AttestationStatement):
@@ -52,7 +52,7 @@ class AndroidSafetyNet(AttestationStatement):
         self.raw = raw
 
     def dump(self):
-        return ''
+        return 'TBD...'
 
 
 class Apple(AttestationStatement):
@@ -60,4 +60,4 @@ class Apple(AttestationStatement):
         self.raw = raw
 
     def dump(self):
-        return ''
+        return 'TBD...'
