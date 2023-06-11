@@ -87,4 +87,4 @@ def attestation_result():
 
 if __name__ == "__main__":
     run_mode = sys.argv[1]
-    app.run(debug=True if run_mode == 'prod' else False, port=8000)
+    app.run(debug=True if run_mode == 'prod' else False, port=8010)
