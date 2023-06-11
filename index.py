@@ -67,8 +67,6 @@ def attestation_result():
         response = Response(attestation['response'])
         attestation['response'] = response.dump()
 
-        print(attestation)
-
         return json.dumps({
             "statusCode": SUCCESS_CODE,
             "attestation": attestation
