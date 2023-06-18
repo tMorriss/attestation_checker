@@ -1,7 +1,10 @@
 import base64
 from abc import ABCMeta, abstractmethod
 
+from lib.jwt import JWT
+
 X5C = 'x5c'
+RESPONSE = 'response'
 
 
 class AttestationStatement(metaclass=ABCMeta):
@@ -65,11 +68,24 @@ class Packed(AttestationStatement):
 
 
 class AndroidSafetyNet(AttestationStatement):
-    def __init__(self, raw):
-        self.raw = raw
+    def __init__(self, json):
+        self.json = json
+        print(self.json['response'].decode())
+        self.jwt = JWT(self.json['response'].decode())
 
     def dump(self):
-        return 'TBD...'
+
+        result = {}
+        for key in self.json.keys():
+            if key == RESPONSE:
+                result[key] = self.jwt.dump()
+            else:
+                value = self.json[key]
+                if type(value) is bytes:
+                    result[key] = value.hex()
+                else:
+                    result[key] = value
+        return result
 
 
 class Apple(AttestationStatement):
