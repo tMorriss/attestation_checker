@@ -83,6 +83,26 @@
                     $('#resultMsg').text(response);
                     return
                 }
+                delete options.statusCode;
+                // 指定したオプションを追加
+                if ($('input[name=authenticatorSelection-enable]').prop('checked')) {
+                    if ($('input[name=authenticatorAttachment-enable]').prop('checked')) {
+                        options.authenticatorSelection.authenticatorAttachment = $('[name=authenticatorAttachment]').val();
+                    }
+                    if ($('input[name=requireResidentKey-enable]').prop('checked')) {
+                        options.authenticatorSelection.requireResidentKey = $('[name=requireResidentKey]').val() == 'true';
+                    }
+                    if ($('input[name=userVerification-enable]').prop('checked')) {
+                        options.authenticatorSelection.userVerification = $('[name=userVerification]').val();
+                    }
+                }
+                if ($('input[name=attestation-enable]').prop('checked')) {
+                    options.attestation = $('[name=attestation]').val();
+                }
+                const dumpMsg = JSON.stringify(options, null, "   ");
+                const dumpHtmlString = dumpMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
+                $('#dumpOptions').html(dumpHtmlString);
+                // 各種デコード
                 options.user.id = new TextEncoder().encode(options.user.id);
                 options.challenge = new TextEncoder().encode(options.challenge);
                 for (let i = 0; i < options.excludeCredentials.length; i++) {
@@ -118,7 +138,49 @@
 
 <body>
     <H1>Attestation Checker</H1><br>
+    <div id="option_picker">
+        <div class="editor indent-0">
+            <input type="checkbox" name="authenticatorSelection-enable">
+            <label for="authenticatorSelection-enable">authenticatorSelection</label>
+        </div>
+        <div class="editor indent-1">
+            <input type="checkbox" name="authenticatorAttachment-enable">
+            <label for="authenticatorAttachment-enable">authenticatorAttachment</label>
+            <select name="authenticatorAttachment">
+                <option value="platform">platform</option>
+                <option value="cross-platform">cross-platform</option>
+            </select>
+        </div>
+        <div class="editor indent-1">
+            <input type="checkbox" name="requireResidentKey-enable">
+            <label for="requireResidentKey-enable">requireResidentKey</label>
+            <select name="requireResidentKey">
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+        </div>
+        <div class="editor indent-1">
+            <input type="checkbox" name="userVerification-enable">
+            <label for="userVerification-enable">userVerification</label>
+            <select name="userVerification">
+                <option value="required">required</option>
+                <option value="preferred">preferred</option>
+                <option value="discouraged">discouraged</option>
+            </select>
+        </div>
+        <div class="editor indent-0">
+            <input type="checkbox" name="attestation-enable">
+            <label for="attestation-enable">attestation</label>
+            <select name="attestation">
+                <option value="direct">direct</option>
+                <option value="indirect">indirect</option>
+                <option value="enterprise">enterprise</option>
+                <option value="none">none</option>
+            </select>
+        </div>
+    </div>
     <button onclick="register()">チェック！</button><br>
+    <div id="dumpOptions"></div>
     <div id="resultMsg"></div>
 </body>
 

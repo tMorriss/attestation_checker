@@ -39,12 +39,13 @@ def attestation_options():
         "pubKeyCredParams": [],
         "timeout": CREDENTIAL_TIMEOUT_MICROSECOND,
         "excludeCredentials": [],
-        "authenticatorSelection": {
-            "authenticatorAttachment": "platform",
-            "requireResidentKey": True,
-            "userVerification": "required"
-        },
-        "attestation": "direct"
+        # js側で上書きするようにしている
+        # "authenticatorSelection": {
+        #     "authenticatorAttachment": "platform",
+        #     "requireResidentKey": True,
+        #     "userVerification": "required"
+        # },
+        # "attestation": "direct"
     }
 
     for alg in ALG_LIST.values():
