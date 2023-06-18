@@ -70,6 +70,7 @@
         }
 
         function register() {
+            $('#dumpOptions').text("");
             $('#resultMsg').text("");
             if (!isUVPAA) {
                 $('#resultMsg').text("isUVPAA is false");
@@ -180,7 +181,10 @@
         </div>
     </div>
     <button onclick="register()">チェック！</button><br>
-    <div id="dumpOptions"></div>
+    <details>
+        <summary>認証機に投げたoptions</summary>
+        <div id="dumpOptions"></div>
+    </details>
     <div id="resultMsg"></div>
 </body>
 
