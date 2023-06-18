@@ -6,6 +6,8 @@
     <title>Attestation Checker</title>
     <link rel="shortcut icon" href="{{url_for('static', filename = 'favicon.ico')}}">
     <script src="{{url_for('static', filename = 'jquery-3.5.1.min.js')}}"></script>
+    <style type="text/css">
+    </style>
     <script>
         var isUVPAA = false;
         let successCode = '2000';
@@ -87,6 +89,7 @@
                 delete options.statusCode;
                 // 指定したオプションを追加
                 if ($('input[name=authenticatorSelection-enable]').prop('checked')) {
+                    options.authenticatorSelection = {};
                     if ($('input[name=authenticatorAttachment-enable]').prop('checked')) {
                         options.authenticatorSelection.authenticatorAttachment = $('[name=authenticatorAttachment]').val();
                     }
