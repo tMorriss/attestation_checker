@@ -36,7 +36,6 @@ class Tpm(AttestationStatement):
                 result[key] = []
                 for cert in self.json[key]:
                     result[key].append(base64.b64encode(cert).decode())
-                    print(type(cert))
             else:
                 value = self.json[key]
                 if type(value) is bytes:
@@ -57,7 +56,6 @@ class Packed(AttestationStatement):
                 result[key] = []
                 for cert in self.json[key]:
                     result[key].append(base64.b64encode(cert).decode())
-                    print(type(cert))
             else:
                 value = self.json[key]
                 if type(value) is bytes:
@@ -70,11 +68,9 @@ class Packed(AttestationStatement):
 class AndroidSafetyNet(AttestationStatement):
     def __init__(self, json):
         self.json = json
-        print(self.json['response'].decode())
         self.jwt = JWT(self.json['response'].decode())
 
     def dump(self):
-
         result = {}
         for key in self.json.keys():
             if key == RESPONSE:

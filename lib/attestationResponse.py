@@ -10,7 +10,7 @@ CLIENT_DATA_JSON = 'clientDataJSON'
 TRANSPORTS = 'transports'
 
 
-class Response:
+class AttestationResponse:
     def __init__(self, json):
         self.json = json
 

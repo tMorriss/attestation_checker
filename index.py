@@ -5,8 +5,9 @@ import sys
 from flask import Flask, render_template, request
 
 from exceptions import FormatException, UnsupportedException
+from lib.assertion import Assertion
 from lib.utils import generate_id
-from lib.response import Response
+from lib.attestationResponse import AttestationResponse
 
 app = Flask(__name__, static_url_path='/fido/static', static_folder='static')
 
@@ -66,7 +67,7 @@ def attestation_result():
         # response読み込み
         if 'response' not in attestation:
             raise FormatException("response")
-        response = Response(attestation['response'])
+        response = AttestationResponse(attestation['response'])
         attestation['response'] = response.dump()
 
         return json.dumps({
@@ -84,6 +85,34 @@ def attestation_result():
         return json.dumps({
             "statusCode": "4001",
             "statusMessage": "Unsupported Request (" + str(e) + ")"
+        })
+
+
+@app.route('/assertion/options', methods=["POST"])
+def assertion_options():
+    challenge = generate_id(16)
+
+    return json.dumps({
+        "statusCode": SUCCESS_CODE,
+        "challenge": challenge,
+        "rpId": RP_ID,
+        "userVerification": "required"
+    })
+
+
+@app.route('/assertion/result', methods=["POST"])
+def assertion_result():
+    try:
+        assertion = Assertion(request.json)
+
+        return json.dumps({
+            "statusCode": SUCCESS_CODE,
+            "assertion": assertion.dump()
+        })
+    except FormatException as e:
+        return json.dumps({
+            "statusCode": "4000",
+            "statusMessage": "Format Error (" + str(e) + ")"
         })
 
 

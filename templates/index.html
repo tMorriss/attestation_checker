@@ -43,6 +43,10 @@
             return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
         }
 
+        function bufferToString(buffer) {
+            return String.fromCharCode.apply(null, new Uint8Array(buffer));
+        }
+
         function attestation_options(options) {
             return $.post({
                 url: "/attestation/options",
@@ -70,6 +74,30 @@
             }
             return $.post({
                 url: "/attestation/result",
+                data: JSON.stringify(credential),
+                contentType: 'application/json'
+            })
+        }
+
+        function assertion_options(options) {
+            return $.post({
+                url: "/assertion/options",
+                contentType: 'application/json'
+            })
+        }
+
+        function assertion_result(rawCredential) {
+            credential = {
+                id: rawCredential.id,
+                response: {
+                    authenticatorData: bufferToBase64Url(rawCredential.response.authenticatorData),
+                    clientDataJSON: bufferToBase64Url(rawCredential.response.clientDataJSON),
+                    signature: bufferToBase64Url(rawCredential.response.signature),
+                    userHandle: bufferToString(rawCredential.response.userHandle)
+                }
+            }
+            return $.post({
+                url: "/assertion/result",
                 data: JSON.stringify(credential),
                 contentType: 'application/json'
             })
@@ -142,9 +170,57 @@
                     transports: responseJson.transports
                 })
                 $("#tblCredentials").append(`<tr><td>${responseJson.credential_id}</td><td>${responseJson.transports}</td></tr>`);
-                const resultMsg = JSON.stringify(responseJson['attestation'], null, "   ");
+                const resultMsg = JSON.stringify(responseJson.attestation, null, "   ");
                 const resultHtmlString = resultMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
                 $('#resultMsg').html(resultHtmlString);
+            });
+        }
+
+        function authenticate() {
+            $('#dumpOptions').text("");
+            $('#resultMsg').text("");
+            // optionsリクエスト
+            assertion_options().then((response) => {
+                // レスポンスをデコード
+                options = JSON.parse(response);
+                if (options.statusCode != successCode) {
+                    $('#resultMsg').text(response);
+                    return;
+                }
+                options.allowCredentials = [];
+                registeredKeys.forEach(key => {
+                    options.allowCredentials.push({
+                        type: "public-key",
+                        id: key.credential_id, // dump用に1回stringで置く
+                        transports: key.transports.split(',')
+                    })
+                })
+                delete options.statusCode;
+                const dumpMsg = JSON.stringify(options, null, "   ");
+                const dumpHtmlString = dumpMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
+                $('#dumpOptions').html(dumpHtmlString);
+
+                options.challenge = new TextEncoder().encode(options.challenge);
+                for (let i = 0; i < options.allowCredentials.length; i++) {
+                    options.allowCredentials[i].id = base64UrlToBuffer(options.allowCredentials[i].id);
+                }
+
+                // 生体認証
+                return navigator.credentials.get({ publicKey: options });
+            }).then((credential) => {
+                // resultリクエスト
+                return assertion_result(credential);
+            }).then((response) => {
+                responseJson = JSON.parse(response)
+                if (responseJson.statusCode != successCode) {
+                    $('#resultMsg').text(response);
+                    return
+                }
+                const resultMsg = JSON.stringify(responseJson.assertion, null, "   ");
+                const resultHtmlString = resultMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
+                $('#resultMsg').html(resultHtmlString);
+            }).catch(e => {
+                $('#resultMsg').text(e);
             });
         }
 
@@ -210,6 +286,10 @@
                 <th>transports</th>
             </tr>
         </table>
+        <div id="option_picker">
+            <div class="editor indent-0">
+            </div>
+        </div>
     </div>
     <button onclick="register()">登録！</button><button onclick="authenticate()">認証！</button><br>
     <details>
