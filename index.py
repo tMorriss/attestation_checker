@@ -71,7 +71,9 @@ def attestation_result():
 
         return json.dumps({
             "statusCode": SUCCESS_CODE,
-            "attestation": attestation
+            "attestation": attestation,
+            "credential_id": response.attestation_object.auth_data.credential_id,
+            "transports": ','.join(response.transports),
         })
     except FormatException as e:
         return json.dumps({

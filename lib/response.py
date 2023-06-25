@@ -7,6 +7,7 @@ from lib.clientData import ClientData
 
 ATTESTATION_OBJECT = 'attestationObject'
 CLIENT_DATA_JSON = 'clientDataJSON'
+TRANSPORTS = 'transports'
 
 
 class Response:
@@ -21,6 +22,7 @@ class Response:
 
         self.attestation_object = AttestationObject(json[ATTESTATION_OBJECT])
         self.client_data = ClientData(json[CLIENT_DATA_JSON])
+        self.transports = json[TRANSPORTS]
 
     def dump(self):
         result = {}

@@ -14,6 +14,7 @@
     <script>
         var isUVPAA = false;
         let successCode = '2000';
+        var registeredKeys = [];
 
         window.onload = function () {
             // FIDO対応か確認
@@ -136,7 +137,10 @@
                     $('#resultMsg').text(response);
                     return
                 }
-                // $('#resultMsg').text("このPCのAttestation Formatは「" + responseJson["fmt"] + "」です！");
+                registeredKeys.push({
+                    credential_id: responseJson.credential_id,
+                    transports: responseJson.transports
+                })
                 const resultMsg = JSON.stringify(responseJson['attestation'], null, "   ");
                 const resultHtmlString = resultMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
                 $('#resultMsg').html(resultHtmlString);
