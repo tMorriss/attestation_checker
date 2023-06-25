@@ -141,6 +141,7 @@
                     credential_id: responseJson.credential_id,
                     transports: responseJson.transports
                 })
+                $("#tblCredentials").append(`<tr><td>${responseJson.credential_id}</td><td>${responseJson.transports}</td></tr>`);
                 const resultMsg = JSON.stringify(responseJson['attestation'], null, "   ");
                 const resultHtmlString = resultMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
                 $('#resultMsg').html(resultHtmlString);
@@ -202,7 +203,15 @@
             </select>
         </div>
     </div>
-    <button onclick="register()">チェック！</button><br>
+    <div>
+        <table id="tblCredentials" border="1">
+            <tr>
+                <th>credential_id</th>
+                <th>transports</th>
+            </tr>
+        </table>
+    </div>
+    <button onclick="register()">登録！</button><button onclick="authenticate()">認証！</button><br>
     <details>
         <summary>認証機に投げたoptions</summary>
         <div id="dumpOptions"></div>
