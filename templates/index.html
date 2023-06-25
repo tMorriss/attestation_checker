@@ -99,6 +99,9 @@
                     if ($('input[name=requireResidentKey-enable]').prop('checked')) {
                         options.authenticatorSelection.requireResidentKey = $('[name=requireResidentKey]').val() == 'true';
                     }
+                    if ($('input[name=residentKey-enable]').prop('checked')) {
+                        options.authenticatorSelection.residentKey = $('[name=residentKey]').val();
+                    }
                     if ($('input[name=userVerification-enable]').prop('checked')) {
                         options.authenticatorSelection.userVerification = $('[name=userVerification]').val();
                     }
@@ -164,6 +167,15 @@
             <select name="requireResidentKey">
                 <option value="true">true</option>
                 <option value="false">false</option>
+            </select>
+        </div>
+        <div class="editor indent-1">
+            <input type="checkbox" id="residentKey-enable" name="residentKey-enable">
+            <label for="residentKey-enable">residentKey</label>
+            <select name="residentKey">
+                <option value="required">required</option>
+                <option value="preferred">preferred</option>
+                <option value="discouraged">discouraged</option>
             </select>
         </div>
         <div class="editor indent-1">

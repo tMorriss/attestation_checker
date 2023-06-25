@@ -43,6 +43,7 @@ def attestation_options():
         # "authenticatorSelection": {
         #     "authenticatorAttachment": "platform",
         #     "requireResidentKey": True,
+        #     "residentKey": "required",
         #     "userVerification": "required"
         # },
         # "attestation": "direct"
