@@ -106,10 +106,6 @@
         function register() {
             $('#dumpOptions').text("");
             $('#resultMsg').text("");
-            if (!isUVPAA) {
-                $('#resultMsg').text("isUVPAA is false");
-                return;
-            }
             // optionsリクエスト
             attestation_options().then((response) => {
                 // レスポンスをデコード
