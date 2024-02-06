@@ -13,7 +13,7 @@ app = Flask(__name__, static_url_path='/fido/static', static_folder='static')
 
 RP_ID = os.environ['RP_ID'] if 'RP_ID' in os.environ.keys() else 'localhost'
 CREDENTIAL_TIMEOUT_MICROSECOND = 30000
-ALG_LIST = {'RS256': -257, 'ES256': -7}
+ALG_LIST = {'ES256': -7, 'RS256': -257}
 SUCCESS_CODE = "2000"
 
 

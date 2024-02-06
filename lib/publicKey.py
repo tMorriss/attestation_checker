@@ -2,9 +2,10 @@ import cbor2
 
 from exceptions import FormatException, UnsupportedException
 
-ALG_LIST = {'RS256': -257, 'ES256': -7}
+ALG_LIST = {'ES256': -7, 'RS256': -257}
 KTY_LIST = {'EC2': 2, 'RSA': 3}
-EC_KEYS = {1: 'P-256', 2: 'P-384', 3: 'P-521', 4: 'X25519', 5: 'X448', 6: 'Ed25519', 7: 'Ed448'}
+EC_KEYS = {1: 'P-256', 2: 'P-384', 3: 'P-521',
+           4: 'X25519', 5: 'X448', 6: 'Ed25519', 7: 'Ed448'}
 
 
 class PublicKey:
@@ -32,4 +33,5 @@ class PublicKey:
                 'y': int.from_bytes(self.pkey[-3], byteorder='big')
             }
         else:
-            raise UnsupportedException(f'pubKey alg: 1={self.pkey[1]}, 3={self.pkey[3]}')
+            raise UnsupportedException(
+                f'pubKey alg: 1={self.pkey[1]}, 3={self.pkey[3]}')
