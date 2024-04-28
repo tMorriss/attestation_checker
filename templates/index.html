@@ -23,10 +23,22 @@
                 if (result) {
                     isUVPAA = true;
                 } else {
-                    $("body").css('background-color', 'red');
-                    $('#resultMsg').text("isUVPAA is false");
+                    $("#isUVPAAStatus").css('background-color', 'red');
                 }
+                $('#isUVPAAStatus').text(isUVPAA);
             });
+            // Conditional UI対応判定
+            if (PublicKeyCredential.isConditionalMediationAvailable) {
+                PublicKeyCredential.isConditionalMediationAvailable()
+                    .then((result) => {
+                        $('#isCMAStatus').text(result);
+                        if (result) {
+                            fireConditionalUi();
+                        } else {
+                            $("#isCMAStatus").css('background-color', 'red');
+                        }
+                    });
+            }
         }
 
         function base64UrlToBuffer(base64) {
@@ -225,6 +237,8 @@
 
 <body>
     <H1>Attestation Checker</H1><br>
+    isUserVerifyingPlatformAuthenticatorAvailable: <span id="isUVPAAStatus"></span><br>
+    isConditionalMediationAvailable: <span id="isCMAStatus"></span><br>
     <div id="option_picker">
         <div class="editor indent-0">
             <input type="checkbox" id="authenticatorSelection-enable" name="authenticatorSelection-enable" checked>
