@@ -32,9 +32,7 @@
                 PublicKeyCredential.isConditionalMediationAvailable()
                     .then((result) => {
                         $('#isCMAStatus').text(result);
-                        if (result) {
-                            fireConditionalUi();
-                        } else {
+                        if (!result) {
                             $("#isCMAStatus").css('background-color', 'red');
                         }
                     });
