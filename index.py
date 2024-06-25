@@ -32,9 +32,9 @@ def attestation_options():
             "name": RP_ID
         },
         "user": {
-            "id": "test_user",
-            "name": "test_user",
-            "displayName": "test_user"
+            "id": "test_user_id",
+            "name": "test_user_name",
+            "displayName": "test_user_display_name"
         },
         "challenge": challenge,
         "pubKeyCredParams": [],
