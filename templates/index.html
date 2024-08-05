@@ -40,7 +40,10 @@
             if (PublicKeyCredential.getClientCapabilities) {
                 PublicKeyCredential.getClientCapabilities()
                     .then((result) => {
-                        $('#isCCStatus').text(JSON.stringify(result));
+                        $('#isCCStatus').text(JSON.stringify(result), null, "  ");
+                    }).catch((e) => {
+                        $('#isCCStatus').text(e);
+                        $("#isCCStatus").css('background-color', 'red');
                     });
             } else {
                 $('#isCCStatus').text("not supported");
