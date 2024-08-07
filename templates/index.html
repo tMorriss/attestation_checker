@@ -40,7 +40,12 @@
             if (PublicKeyCredential.getClientCapabilities) {
                 PublicKeyCredential.getClientCapabilities()
                     .then((result) => {
-                        $('#isCCStatus').text(JSON.stringify(result), null, "  ");
+                        $("#tblClientCapabilities tbody tr").remove();
+                        $("#tblClientCapabilities").append(`<tr><th>capability</th><th>result</th></tr>`);
+                        Object.keys(result).forEach((e) => {
+                            $("#tblClientCapabilities").append(`<tr><td>${e}</td><td>${result[e]}</td></tr>`);
+                        })
+                        $('#isCCStatus').text("");
                     }).catch((e) => {
                         $('#isCCStatus').text(e);
                         $("#isCCStatus").css('background-color', 'red');
@@ -315,6 +320,12 @@
     isUserVerifyingPlatformAuthenticatorAvailable: <span id="isUVPAAStatus"></span><br>
     isConditionalMediationAvailable: <span id="isCMAStatus"></span><br>
     getClientCapabilities: <span id="isCCStatus"></span><br>
+    <table id="tblClientCapabilities" border="1">
+        <tr>
+            <th>capability</th>
+            <th>result</th>
+        </tr>
+    </table>
     <div id="option_picker">
         <div class="editor indent-0">
             <input type="checkbox" id="authenticatorSelection-enable" name="authenticatorSelection-enable" checked>
