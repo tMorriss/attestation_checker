@@ -171,8 +171,7 @@ def apple_app_site_association():
                 "8C4E2GHE7U.jp.co.yahoo.paypayfleamarket"
             ]
         }
-    }
-    )
+    }), 200, {'Content-Type': 'application/json'}
 
 
 if __name__ == "__main__":
