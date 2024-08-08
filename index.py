@@ -116,64 +116,6 @@ def assertion_result():
         })
 
 
-@app.route('/apple-app-site-association', methods=["GET"])
-def apple_app_site_association():
-    return json.dumps({
-        "webcredentials":
-        {
-            "apps": [
-                "8C4E2GHE7U.jp.co.yahoo.YAuction",
-                "8C4E2GHE7U.jp.co.yahoo.yfinance",
-                "8C4E2GHE7U.jp.co.yahoo.YBackup",
-                "8C4E2GHE7U.jp.co.yahoo.enterprise.YBackup",
-                "8C4E2GHE7U.jp.co.yahoo.yjtrend01",
-                "8C4E2GHE7U.jp.co.yahoo.chievision",
-                "8C4E2GHE7U.jp.co.yahoo.YNaviApp",
-                "8C4E2GHE7U.jp.co.yahoo.realestate.search",
-                "8C4E2GHE7U.jp.co.yahoo.BasePlayer",
-                "8C4E2GHE7U.jp.co.yahoo.sports.npb.textlive",
-                "8C4E2GHE7U.jp.co.yahoo.enterprise.sports.npb.textlive",
-                "8C4E2GHE7U.jp.co.yahoo.ios.sports.sportsnavi",
-                "8C4E2GHE7U.jp.co.yahoo.enterprise.sports.sportsnavi",
-                "8C4E2GHE7U.jp.co.yahoo.wallet.transfer",
-                "8C4E2GHE7U.jp.co.yahoo.realtime.buzzalert",
-                "8C4E2GHE7U.jp.co.yahoo.emg.alert",
-                "8C4E2GHE7U.jp.co.yahoo.transit.app",
-                "8C4E2GHE7U.jp.co.yahoo.ymail",
-                "8C4E2GHE7U.jp.co.yahoo.enterprise.ymail",
-                "8C4E2GHE7U.jp.co.yahoo.Shopping",
-                "8C4E2GHE7U.jp.co.yahoo.partner",
-                "8C4E2GHE7U.com.cf.petacal",
-                "8C4E2GHE7U.jp.co.yahoo.comic01",
-                "8C4E2GHE7U.jp.co.yahoo.ebookjapan",
-                "8C4E2GHE7U.jp.co.yahoo.ebookjapanyahoo",
-                "8C4E2GHE7U.jp.co.yahoo.apppkgcal",
-                "8C4E2GHE7U.jp.co.yahoo.ipn.appli",
-                "8C4E2GHE7U.jp.co.yahoo.ipn.appli.qa",
-                "8C4E2GHE7U.jp.co.yahoo.ipn.appli.staging",
-                "8C4E2GHE7U.jp.co.yahoo.ipn.appli.debug",
-                "8C4E2GHE7U.jp.co.yahoo.ipn.appli.test",
-                "8C4E2GHE7U.jp.co.yahoo.YWeatherApp",
-                "8C4E2GHE7U.jp.co.yahoo.mythingsapp",
-                "8C4E2GHE7U.jp.co.yahoo.maps",
-                "8C4E2GHE7U.jp.co.yahoo.enterprise.maps",
-                "8C4E2GHE7U.jp.co.yahoo.mic.maps",
-                "8C4E2GHE7U.jp.co.yahoo.YFortuneApp",
-                "8C4E2GHE7U.jp.co.yahoo.enterprise.YFortuneApp",
-                "8C4E2GHE7U.com.cf.selene",
-                "8C4E2GHE7U.jp.co.yahoo.yjotp",
-                "8C4E2GHE7U.jp.trilltrill.trill",
-                "8C4E2GHE7U.jp.co.yahoo.fleamarket",
-                "8C4E2GHE7U.jp.co.yahoo.paypaymall",
-                "8C4E2GHE7U.jp.co.yahoo.onseikensaku",
-                "8C4E2GHE7U.jp.co.yahoo.premium.yomihodai",
-                "8C4E2GHE7U.jp.co.yahoo.enterprise.fleamarket",
-                "8C4E2GHE7U.jp.co.yahoo.paypayfleamarket"
-            ]
-        }
-    }), 200, {'Content-Type': 'application/json'}
-
-
 if __name__ == "__main__":
     run_mode = sys.argv[1] if len(sys.argv) > 1 else 'debug'
     app.run(debug=False if run_mode == 'prod' else True, port=8000)
