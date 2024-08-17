@@ -19,10 +19,49 @@ SUCCESS_CODE = "2000"
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html',
+                           user_agent=request.user_agent,
+                           sec_ch_ua=request.headers.get('sec-ch-ua'),
+                           sec_ch_ua_arch=request.headers.get(
+                               'sec-ch-ua-arch'),
+                           sec_ch_ua_bitness=request.headers.get(
+                               'sec-ch-ua-bitness'),
+                           sec_ch_ua_full_version_list=request.headers.get(
+                               'sec-ch-ua-full-version-list'),
+                           sec_ch_ua_full_version=request.headers.get(
+                               'sec-ch-ua-full-version'),
+                           sec_ch_ua_mobile=request.headers.get(
+                               'sec-ch-ua-mobile'),
+                           sec_ch_ua_model=request.headers.get(
+                               'sec-ch-ua-model'),
+                           sec_ch_ua_platform=request.headers.get(
+                               'sec-ch-ua-platform'),
+                           sec_ch_ua_platform_version=request.headers.get(
+                               'sec-ch-ua-platform-version'),
+                           sec_ch_prefers_reduced_motion=request.headers.get(
+                               'sec-ch-prefers-reduced-motion'),
+                           sec_ch_prefers_color_scheme=request.headers.get(
+                               'sec-ch-prefers-color-scheme'),
+                           device_memory=request.headers.get(
+                               'device-memory'),
+                           dpr=request.headers.get(
+                               'dpr'),
+                           width=request.headers.get(
+                               'width'),
+                           viewport_width=request.headers.get(
+                               'viewport-width'),
+                           save_data=request.headers.get(
+                               'save-data'),
+                           downlink=request.headers.get(
+                               'downlink'),
+                           ect=request.headers.get(
+                               'ect'),
+                           rtt=request.headers.get(
+                               'rtt'),
+                           )
 
 
-@app.route('/attestation/options', methods=["POST"])
+@ app.route('/attestation/options', methods=["POST"])
 def attestation_options():
     challenge = generate_id(16)
     options = {
@@ -59,7 +98,7 @@ def attestation_options():
     return json.dumps(options)
 
 
-@app.route('/attestation/result', methods=["POST"])
+@ app.route('/attestation/result', methods=["POST"])
 def attestation_result():
     try:
         attestation = request.json
@@ -88,7 +127,7 @@ def attestation_result():
         })
 
 
-@app.route('/assertion/options', methods=["POST"])
+@ app.route('/assertion/options', methods=["POST"])
 def assertion_options():
     challenge = generate_id(16)
 
@@ -100,7 +139,7 @@ def assertion_options():
     })
 
 
-@app.route('/assertion/result', methods=["POST"])
+@ app.route('/assertion/result', methods=["POST"])
 def assertion_result():
     try:
         assertion = Assertion(request.json)
