@@ -76,6 +76,22 @@
             return String.fromCharCode.apply(null, new Uint8Array(buffer));
         }
 
+        function digObject(obj) {
+            const result = {}
+            for (const key in obj) {
+                if (obj[key] instanceof ArrayBuffer) {
+                    result[key] = bufferToBase64Url(obj[key])
+                } else if (typeof obj[key] === 'object') {
+                    result[key] = digObject(obj[key])
+                } else if (typeof obj[key] === 'function') {
+                    result[key] = obj[key]()
+                } else {
+                    result[key] = obj[key]
+                }
+            }
+            return result
+        }
+
         function attestation_options(options) {
             return $.post({
                 url: "/attestation/options",
@@ -85,14 +101,7 @@
         }
 
         function attestation_result(rawCredential) {
-            credential = {
-                id: rawCredential.id,
-                response: {
-                    attestationObject: bufferToBase64Url(rawCredential.response.attestationObject),
-                    clientDataJSON: bufferToBase64Url(rawCredential.response.clientDataJSON),
-                },
-                type: rawCredential.type
-            }
+            const credential = digObject(rawCredential)
             try {
                 credential.response.transports = rawCredential.response.getTransports();
             } catch (TypeError) {
@@ -112,15 +121,7 @@
         }
 
         function assertion_result(rawCredential) {
-            credential = {
-                id: rawCredential.id,
-                response: {
-                    authenticatorData: bufferToBase64Url(rawCredential.response.authenticatorData),
-                    clientDataJSON: bufferToBase64Url(rawCredential.response.clientDataJSON),
-                    signature: bufferToBase64Url(rawCredential.response.signature),
-                    userHandle: bufferToString(rawCredential.response.userHandle)
-                }
-            }
+            const credential = digObject(rawCredential)
             return $.post({
                 url: "/assertion/result",
                 data: JSON.stringify(credential),
