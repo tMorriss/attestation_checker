@@ -102,10 +102,6 @@
 
         function attestation_result(rawCredential) {
             const credential = digObject(rawCredential)
-            try {
-                credential.response.transports = rawCredential.response.getTransports();
-            } catch (TypeError) {
-            }
             return $.post({
                 url: "/attestation/result",
                 data: JSON.stringify(credential),
