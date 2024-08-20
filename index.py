@@ -15,6 +15,8 @@ RP_ID = os.environ['RP_ID'] if 'RP_ID' in os.environ.keys() else 'localhost'
 CREDENTIAL_TIMEOUT_MICROSECOND = 30000
 ALG_LIST = {'ES256': -7, 'RS256': -257}
 SUCCESS_CODE = "2000"
+ACCEPT_CHS = ['Sec-CH-UA', 'Sec-CH-UA-Arch', 'Sec-CH-UA-Bitness', 'Sec-CH-UA-Full-Version-List', 'Sec-CH-UA-Full-Version', 'Sec-CH-UA-Mobile', 'Sec-CH-UA-Model', 'Sec-CH-UA-Platform',
+              'Sec-CH-UA-Platform-Version', 'Sec-CH-Prefers-Reduced-Motion', 'Sec-CH-Prefers-Color-Scheme', 'Device-Memory', 'DPR', 'Width', 'Viewport-Width', 'Save-Data', 'Downlink', 'ECT', 'RTT']
 
 
 @app.route('/')
