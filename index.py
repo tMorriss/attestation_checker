@@ -155,6 +155,12 @@ def assertion_result():
         })
 
 
+@app.after_request
+def add_header(response):
+    response.headers['Accept-CH'] = ', '.join(ACCEPT_CHS)
+    return response
+
+
 if __name__ == "__main__":
     run_mode = sys.argv[1] if len(sys.argv) > 1 else 'debug'
     app.run(debug=False if run_mode == 'prod' else True, port=8000)
