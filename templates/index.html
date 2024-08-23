@@ -79,7 +79,9 @@
         function digObject(obj) {
             const result = {}
             for (const key in obj) {
-                if (obj[key] instanceof ArrayBuffer) {
+                if (obj[key] === null) {
+                    result[key] = null
+                } else if (obj[key] instanceof ArrayBuffer) {
                     result[key] = bufferToBase64Url(obj[key])
                 } else if (typeof obj[key] === 'object') {
                     result[key] = digObject(obj[key])
