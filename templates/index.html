@@ -299,6 +299,8 @@
                 // 生体認証
                 return navigator.credentials.get({ publicKey: options });
             }).then((credential) => {
+                console.log('assertion_dump')
+                console.log(credential)
                 // resultリクエスト
                 return assertion_result(credential);
             }).then((response) => {
