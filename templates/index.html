@@ -205,7 +205,9 @@
         function authenticate(isConditionalUI) {
             $('#dumpOptions').text("");
             $('#resultMsg').text("");
-            conditionalUiController.abort('AnotherSessionRequested'); //前の処理をキャンセル
+            if (!isConditionalUI) {
+                conditionalUiController.abort('AnotherSessionRequested'); //前の処理をキャンセル
+            }
             // optionsリクエスト
             assertion_options().then((response) => {
                 // レスポンスをデコード
