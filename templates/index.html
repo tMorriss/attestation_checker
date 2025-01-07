@@ -33,7 +33,9 @@
                 PublicKeyCredential.isConditionalMediationAvailable()
                     .then((result) => {
                         $('#isCMAStatus').text(result);
-                        if (!result) {
+                        if (result) {
+                            authenticate(true);
+                        } else {
                             $("#isCMAStatus").css('background-color', 'red');
                         }
                     });
@@ -338,7 +340,7 @@
         </div>
         <input type="username" placeholder="Conditional UI用" autocomplete="webauthn" /><br>
         <button onclick="register()">登録！</button>
-        <button onclick="authenticate()">認証！</button>
+        <button onclick="authenticate(false)">認証！</button>
         <details>
             <summary>認証機に投げたoptions</summary>
             <div id="dumpOptions"></div>
