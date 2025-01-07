@@ -15,6 +15,7 @@
         var isUVPAA = false;
         let successCode = '2000';
         var registeredKeys = [];
+        const conditionalUiController = new AbortController();
 
         window.onload = function () {
             // FIDO対応か確認
@@ -132,6 +133,7 @@
         function register() {
             $('#dumpOptions').text("");
             $('#resultMsg').text("");
+            conditionalUiController.abort('AnotherSessionRequested'); //前の処理をキャンセル
             // optionsリクエスト
             attestation_options().then((response) => {
                 // レスポンスをデコード
@@ -198,78 +200,10 @@
             });
         }
 
-        function autoRegister() {
+        function authenticate(isConditionalUI) {
             $('#dumpOptions').text("");
             $('#resultMsg').text("");
-            // optionsリクエスト
-            attestation_options().then((response) => {
-                // レスポンスをデコード
-                options = JSON.parse(response);
-                if (options.statusCode != successCode) {
-                    $('#resultMsg').text(response);
-                    return
-                }
-                delete options.statusCode;
-                // 指定したオプションを追加
-                if ($('input[name=authenticatorSelection-enable]').prop('checked')) {
-                    options.authenticatorSelection = {};
-                    if ($('input[name=authenticatorAttachment-enable]').prop('checked')) {
-                        options.authenticatorSelection.authenticatorAttachment = $('[name=authenticatorAttachment]').val();
-                    }
-                    if ($('input[name=requireResidentKey-enable]').prop('checked')) {
-                        options.authenticatorSelection.requireResidentKey = $('[name=requireResidentKey]').val() == 'true';
-                    }
-                    if ($('input[name=residentKey-enable]').prop('checked')) {
-                        options.authenticatorSelection.residentKey = $('[name=residentKey]').val();
-                    }
-                    if ($('input[name=userVerification-enable]').prop('checked')) {
-                        options.authenticatorSelection.userVerification = $('[name=userVerification]').val();
-                    }
-                }
-                if ($('input[name=attestation-enable]').prop('checked')) {
-                    options.attestation = $('[name=attestation]').val();
-                }
-                const dumpMsg = JSON.stringify(options, null, "   ");
-                const dumpHtmlString = dumpMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
-                $('#dumpOptions').html(dumpHtmlString);
-                // 各種デコード
-                options.user.id = new TextEncoder().encode(options.user.id);
-                options.challenge = new TextEncoder().encode(options.challenge);
-                for (let i = 0; i < options.excludeCredentials.length; i++) {
-                    options.excludeCredentials[i].id = base64UrlToBuffer(options.excludeCredentials[i].id)
-                }
-                // 鍵生成
-                return navigator.credentials.create({ publicKey: options, mediation: "conditional" });
-            }).then((credential) => {
-                // resultリクエスト
-                return attestation_result(credential);
-            }).catch(e => {
-                if (e.name == "InvalidStateError" && e.message == "The user attempted to register an authenticator that contains one of the credentials already registered with the relying party.") {
-                    $('#resultMsg').text("二重登録エラー");
-                    return;
-                } else {
-                    $('#resultMsg').text(e);
-                }
-            }).then((response) => {
-                responseJson = JSON.parse(response)
-                if (responseJson.statusCode != successCode) {
-                    $('#resultMsg').text(response);
-                    return
-                }
-                registeredKeys.push({
-                    credential_id: responseJson.credential_id,
-                    transports: responseJson.transports
-                })
-                $("#tblCredentials").append(`<tr><td>${responseJson.credential_id}</td><td>${responseJson.transports}</td></tr>`);
-                const resultMsg = JSON.stringify(responseJson.attestation, null, "   ");
-                const resultHtmlString = resultMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
-                $('#resultMsg').html(resultHtmlString);
-            });
-        }
-
-        function authenticate() {
-            $('#dumpOptions').text("");
-            $('#resultMsg').text("");
+            conditionalUiController.abort('AnotherSessionRequested'); //前の処理をキャンセル
             // optionsリクエスト
             assertion_options().then((response) => {
                 // レスポンスをデコード
@@ -297,7 +231,15 @@
                 }
 
                 // 生体認証
-                return navigator.credentials.get({ publicKey: options });
+                if (isConditionalUI) {
+                    return navigator.credentials.get({
+                        mediation: 'conditional',
+                        publicKey: options,
+                        signal: conditionalUiController.signal
+                    });
+                } else {
+                    return navigator.credentials.get({ publicKey: options });
+                }
             }).then((credential) => {
                 console.log('assertion_dump')
                 console.log(credential)
@@ -394,9 +336,9 @@
                 </div>
             </div>
         </div>
+        <input type="username" placeholder="Conditional UI用" autocomplete="webauthn" /><br>
         <button onclick="register()">登録！</button>
         <button onclick="authenticate()">認証！</button>
-        <button onclick="autoRegister()">自動登録！</button><br>
         <details>
             <summary>認証機に投げたoptions</summary>
             <div id="dumpOptions"></div>
