@@ -205,6 +205,7 @@
         function authenticate(isConditionalUI) {
             $('#dumpOptions').text("");
             $('#resultMsg').text("");
+            console.log("fire authenticate, conditional ui = " + isConditionalUI);
             if (!isConditionalUI) {
                 conditionalUiController.abort('AnotherSessionRequested'); //前の処理をキャンセル
             }
@@ -233,6 +234,9 @@
                 for (let i = 0; i < options.allowCredentials.length; i++) {
                     options.allowCredentials[i].id = base64UrlToBuffer(options.allowCredentials[i].id);
                 }
+
+                console.log("options");
+                console.log(options);
 
                 // 生体認証
                 if (isConditionalUI) {
@@ -340,7 +344,7 @@
                 </div>
             </div>
         </div>
-        <input type="username" placeholder="Conditional UI用(テスト中)" autocomplete="webauthn" /><br>
+        <input type="username" id="username" placeholder="Conditional UI用" autocomplete="webauthn" /><br>
         <button onclick="register()">登録！</button>
         <button onclick="authenticate(false)">認証！</button>
         <details>
