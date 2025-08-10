@@ -87,7 +87,11 @@
                 } else if (typeof obj[key] === 'object') {
                     result[key] = digObject(obj[key])
                 } else if (typeof obj[key] === 'function') {
-                    result[key] = obj[key]()
+                    try {
+                        result[key] = obj[key]()
+                    } catch (e) {
+                        result[key] = `FunctionError: ${e.message}`;
+                    }
                 } else {
                     result[key] = obj[key]
                 }
