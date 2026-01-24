@@ -3,14 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attestation Checker</title>
     <link rel="shortcut icon" href="{{url_for('static', filename = 'favicon.ico')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'style.css')}}">
     <script src="{{url_for('static', filename = 'jquery-3.5.1.min.js')}}"></script>
-    <style type="text/css">
-        .indent-1 {
-            margin-left: 15px;
-        }
-    </style>
     <script>
         var isUVPAA = false;
         let successCode = '2000';
@@ -23,20 +20,20 @@
             ).then((result) => {
                 if (result) {
                     isUVPAA = true;
+                    $('#isUVPAAStatus').text('TRUE').addClass('text-success').removeClass('text-error');
                 } else {
-                    $("#isUVPAAStatus").css('background-color', 'red');
+                    $('#isUVPAAStatus').text('FALSE').addClass('text-error').removeClass('text-success');
                 }
-                $('#isUVPAAStatus').text(isUVPAA);
             });
             // Conditional UI対応判定
             if (PublicKeyCredential.isConditionalMediationAvailable) {
                 PublicKeyCredential.isConditionalMediationAvailable()
                     .then((result) => {
-                        $('#isCMAStatus').text(result);
                         if (result) {
+                            $('#isCMAStatus').text('TRUE').addClass('text-success').removeClass('text-error');
                             authenticate(true);
                         } else {
-                            $("#isCMAStatus").css('background-color', 'red');
+                            $('#isCMAStatus').text('FALSE').addClass('text-error').removeClass('text-success');
                         }
                     });
             }
@@ -46,16 +43,23 @@
                         $("#tblClientCapabilities tbody tr").remove();
                         $("#tblClientCapabilities").append(`<tr><th>capability</th><th>result</th></tr>`);
                         Object.keys(result).forEach((e) => {
-                            $("#tblClientCapabilities").append(`<tr><td>${e}</td><td>${result[e]}</td></tr>`);
+                            let value = result[e];
+                            let className = '';
+                            if (value === true) {
+                                className = 'text-success';
+                                value = 'TRUE';
+                            } else if (value === false) {
+                                className = 'text-error';
+                                value = 'FALSE';
+                            }
+                            $("#tblClientCapabilities").append(`<tr><td>${e}</td><td><span class="${className}">${value}</span></td></tr>`);
                         })
-                        $('#isCCStatus').text("");
+                        $('#isCCStatus').text('Done').addClass('status-indicator');
                     }).catch((e) => {
-                        $('#isCCStatus').text(e);
-                        $("#isCCStatus").css('background-color', 'red');
+                        $('#isCCStatus').text(e).addClass('text-error');
                     });
             } else {
-                $('#isCCStatus').text("not supported");
-                $("#isCCStatus").css('background-color', 'red');
+                $('#isCCStatus').text("not supported").addClass('text-muted');
             }
         }
 
@@ -275,175 +279,212 @@
 </head>
 
 <body>
-    <H1>Attestation Checker</H1>
-    <div>
-        <H2>FIDO関係対応状況</H2>
-        isUserVerifyingPlatformAuthenticatorAvailable: <span id="isUVPAAStatus"></span><br>
-        isConditionalMediationAvailable: <span id="isCMAStatus"></span><br>
-        getClientCapabilities: <span id="isCCStatus"></span><br>
-        <table id="tblClientCapabilities" border="1">
-        </table>
-    </div>
-    <H2>FIDOテスト</H2>
-    <div>
-        <div id="option_picker">
-            <div class="editor indent-0">
-                <input type="checkbox" id="authenticatorSelection-enable" name="authenticatorSelection-enable" checked>
-                <label for="authenticatorSelection-enable">authenticatorSelection</label>
-            </div>
-            <div class="editor indent-1">
-                <input type="checkbox" id="authenticatorAttachment-enable" name="authenticatorAttachment-enable" checked>
-                <label for="authenticatorAttachment-enable">authenticatorAttachment</label>
-                <select name="authenticatorAttachment">
-                    <option value="platform">platform</option>
-                    <option value="cross-platform">cross-platform</option>
-                </select>
-            </div>
-            <div class="editor indent-1">
-                <input type="checkbox" id="requireResidentKey-enable" name="requireResidentKey-enable" checked>
-                <label for="requireResidentKey-enable">requireResidentKey</label>
-                <select name="requireResidentKey">
-                    <option value="true">true</option>
-                    <option value="false">false</option>
-                </select>
-            </div>
-            <div class="editor indent-1">
-                <input type="checkbox" id="residentKey-enable" name="residentKey-enable">
-                <label for="residentKey-enable">residentKey</label>
-                <select name="residentKey">
-                    <option value="required">required</option>
-                    <option value="preferred">preferred</option>
-                    <option value="discouraged">discouraged</option>
-                </select>
-            </div>
-            <div class="editor indent-1">
-                <input type="checkbox" id="userVerification-enable" name="userVerification-enable" checked>
-                <label for="userVerification-enable">userVerification</label>
-                <select name="userVerification">
-                    <option value="required">required</option>
-                    <option value="preferred">preferred</option>
-                    <option value="discouraged">discouraged</option>
-                </select>
-            </div>
-            <div class="editor indent-0">
-                <input type="checkbox" id="attestation-enable" name="attestation-enable" checked>
-                <label for="attestation-enable">attestation</label>
-                <select name="attestation">
-                    <option value="direct">direct</option>
-                    <option value="indirect">indirect</option>
-                    <option value="enterprise">enterprise</option>
-                    <option value="none">none</option>
-                </select>
-            </div>
+    <div class="container">
+        <H1>Attestation Checker</H1>
+
+        <div class="card">
+            <H2>FIDO関係対応状況</H2>
+            <table class="status-table">
+                <tr>
+                    <th>Check Item</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>isUserVerifyingPlatformAuthenticatorAvailable</td>
+                    <td><span id="isUVPAAStatus" class="status-indicator">Checking...</span></td>
+                </tr>
+                <tr>
+                    <td>isConditionalMediationAvailable</td>
+                    <td><span id="isCMAStatus" class="status-indicator">Checking...</span></td>
+                </tr>
+                <tr>
+                    <td>getClientCapabilities</td>
+                    <td><span id="isCCStatus" class="status-indicator">Checking...</span></td>
+                </tr>
+            </table>
+
+            <H3>Client Capabilities Details</H3>
+            <table id="tblClientCapabilities">
+                <!-- Filled by JS -->
+            </table>
         </div>
-        <div>
-            <table id="tblCredentials" border="1">
+
+        <div class="card">
+            <H2>FIDOテスト</H2>
+            <div id="option_picker" class="options-grid">
+                <div class="editor indent-0 form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="authenticatorSelection-enable" name="authenticatorSelection-enable"
+                            checked>
+                        <label for="authenticatorSelection-enable">authenticatorSelection</label>
+                    </div>
+                </div>
+                <div class="editor indent-1 form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="authenticatorAttachment-enable" name="authenticatorAttachment-enable"
+                            checked>
+                        <label for="authenticatorAttachment-enable">authenticatorAttachment</label>
+                    </div>
+                    <select name="authenticatorAttachment">
+                        <option value="platform">platform</option>
+                        <option value="cross-platform">cross-platform</option>
+                    </select>
+                </div>
+                <div class="editor indent-1 form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="requireResidentKey-enable" name="requireResidentKey-enable" checked>
+                        <label for="requireResidentKey-enable">requireResidentKey</label>
+                    </div>
+                    <select name="requireResidentKey">
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                    </select>
+                </div>
+                <div class="editor indent-1 form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="residentKey-enable" name="residentKey-enable">
+                        <label for="residentKey-enable">residentKey</label>
+                    </div>
+                    <select name="residentKey">
+                        <option value="required">required</option>
+                        <option value="preferred">preferred</option>
+                        <option value="discouraged">discouraged</option>
+                    </select>
+                </div>
+                <div class="editor indent-1 form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="userVerification-enable" name="userVerification-enable" checked>
+                        <label for="userVerification-enable">userVerification</label>
+                    </div>
+                    <select name="userVerification">
+                        <option value="required">required</option>
+                        <option value="preferred">preferred</option>
+                        <option value="discouraged">discouraged</option>
+                    </select>
+                </div>
+                <div class="editor indent-0 form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="attestation-enable" name="attestation-enable" checked>
+                        <label for="attestation-enable">attestation</label>
+                    </div>
+                    <select name="attestation">
+                        <option value="direct">direct</option>
+                        <option value="indirect">indirect</option>
+                        <option value="enterprise">enterprise</option>
+                        <option value="none">none</option>
+                    </select>
+                </div>
+            </div>
+
+            <H3>Registered Credentials</H3>
+            <table id="tblCredentials">
                 <tr>
                     <th>credential_id</th>
                     <th>transports</th>
                 </tr>
             </table>
-            <div id="option_picker">
-                <div class="editor indent-0">
-                </div>
+
+            <div class="form-group" style="margin-top: 2rem;">
+                <label for="username">Username (for Conditional UI)</label>
+                <input type="username" id="username" placeholder="Enter username" autocomplete="webauthn" />
             </div>
+
+            <div class="btn-group">
+                <button onclick="register()">登録！(Register)</button>
+                <button onclick="authenticate(false)">認証！(Authenticate)</button>
+            </div>
+
+            <details>
+                <summary>認証機に投げたoptions (Options sent to authenticator)</summary>
+                <div id="dumpOptions"></div>
+            </details>
+            <div id="resultMsg"></div>
         </div>
-        <input type="username" id="username" placeholder="Conditional UI用" autocomplete="webauthn" /><br>
-        <button onclick="register()">登録！</button>
-        <button onclick="authenticate(false)">認証！</button>
-        <details>
-            <summary>認証機に投げたoptions</summary>
-            <div id="dumpOptions"></div>
-        </details>
-        <div id="resultMsg"></div>
-    </div>
-    <div>
-        <H2>ブラウザ情報</H2>
-        <table id="tblCredentials" border="1">
-            <tr>
-                <th>User Agent</th>
-                <td>{{user_agent}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA</th>
-                <td>{{sec_ch_ua}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA-Arch</th>
-                <td>{{sec_ch_ua_arch}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA-Bitness</th>
-                <td>{{sec_ch_ua_bitness}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA-Full-Version-List</th>
-                <td>{{sec_ch_ua_full_version_list}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA-Full-Version</th>
-                <td>{{sec_ch_ua_full_version}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA-Mobile</th>
-                <td>{{sec_ch_ua_mobile}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA-Model</th>
-                <td>{{sec_ch_ua_model}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA-Platform</th>
-                <td>{{sec_ch_ua_platform}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-UA-Platform-Version</th>
-                <td>{{sec_ch_ua_platform_version}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-Prefers-Reduced-Motion</th>
-                <td>{{sec_ch_prefers_reduced_motion}}</td>
-            </tr>
-            <tr>
-                <th>Sec-CH-Prefers-Color-Scheme</th>
-                <td>{{sec_ch_prefers_color_scheme}}</td>
-            </tr>
-            <tr>
-                <th>Device-Memory</th>
-                <td>{{device_memory}}</td>
-            </tr>
-            <tr>
-                <th>DPR</th>
-                <td>{{dpr}}</td>
-            </tr>
-            <tr>
-                <th>Width</th>
-                <td>{{width}}</td>
-            </tr>
-            <tr>
-                <th>Viewport-Width</th>
-                <td>{{viewport_width}}</td>
-            </tr>
-            <tr>
-                <th>Save-Data</th>
-                <td>{{save_data}}</td>
-            </tr>
-            <tr>
-                <th>Downlink</th>
-                <td>{{downlink}}</td>
-            </tr>
-            <tr>
-                <th>ECT</th>
-                <td>{{ect}}</td>
-            </tr>
-            <tr>
-                <th>RTT</th>
-                <td>{{rtt}}</td>
-            </tr>
-        </table>
-        <div id="option_picker">
-            <div class="editor indent-0">
-            </div>
+
+        <div class="card">
+            <H2>ブラウザ情報 (Browser Info)</H2>
+            <table id="tblBrowserInfo">
+                <tr>
+                    <th>User Agent</th>
+                    <td>{{user_agent}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA</th>
+                    <td>{{sec_ch_ua}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA-Arch</th>
+                    <td>{{sec_ch_ua_arch}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA-Bitness</th>
+                    <td>{{sec_ch_ua_bitness}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA-Full-Version-List</th>
+                    <td>{{sec_ch_ua_full_version_list}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA-Full-Version</th>
+                    <td>{{sec_ch_ua_full_version}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA-Mobile</th>
+                    <td>{{sec_ch_ua_mobile}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA-Model</th>
+                    <td>{{sec_ch_ua_model}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA-Platform</th>
+                    <td>{{sec_ch_ua_platform}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-UA-Platform-Version</th>
+                    <td>{{sec_ch_ua_platform_version}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-Prefers-Reduced-Motion</th>
+                    <td>{{sec_ch_prefers_reduced_motion}}</td>
+                </tr>
+                <tr>
+                    <th>Sec-CH-Prefers-Color-Scheme</th>
+                    <td>{{sec_ch_prefers_color_scheme}}</td>
+                </tr>
+                <tr>
+                    <th>Device-Memory</th>
+                    <td>{{device_memory}}</td>
+                </tr>
+                <tr>
+                    <th>DPR</th>
+                    <td>{{dpr}}</td>
+                </tr>
+                <tr>
+                    <th>Width</th>
+                    <td>{{width}}</td>
+                </tr>
+                <tr>
+                    <th>Viewport-Width</th>
+                    <td>{{viewport_width}}</td>
+                </tr>
+                <tr>
+                    <th>Save-Data</th>
+                    <td>{{save_data}}</td>
+                </tr>
+                <tr>
+                    <th>Downlink</th>
+                    <td>{{downlink}}</td>
+                </tr>
+                <tr>
+                    <th>ECT</th>
+                    <td>{{ect}}</td>
+                </tr>
+                <tr>
+                    <th>RTT</th>
+                    <td>{{rtt}}</td>
+                </tr>
+            </table>
         </div>
     </div>
 </body>
