@@ -336,3 +336,58 @@ summary:hover {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    /* Better option grid for small screens */
+    .options-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* Make buttons full width and stacked */
+    .btn-group {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    button {
+        width: 100%;
+        padding: 0.875rem;
+        /* Larger touch target */
+    }
+
+    /* Handle Tables on Mobile */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    th,
+    td {
+        padding: 0.75rem 0.5rem;
+        /* Reduce padding */
+    }
+
+    /* Adjust status table specifically if needed */
+    .status-table th,
+    .status-table td {
+        white-space: normal;
+        /* Allow text wrap for status table if key names are long */
+    }
+}
