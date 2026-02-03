@@ -277,6 +277,12 @@
 
         // Signal API test functions
         function updateSignalStatus() {
+            if (!conditionalUiController) {
+                $('#signalAborted').text('ERROR').addClass('text-error');
+                $('#signalReason').text('Controller not initialized');
+                return;
+            }
+            
             const isAborted = conditionalUiController.signal.aborted;
             $('#signalAborted').text(isAborted ? 'TRUE' : 'FALSE')
                 .removeClass('text-success text-error')
@@ -291,11 +297,16 @@
 
         function addLogEntry(message) {
             const timestamp = new Date().toLocaleTimeString();
-            const logEntry = `[${timestamp}] ${message}\n`;
+            const logEntry = `<div>[${timestamp}] ${message}</div>`;
             $('#signalTestLog').prepend(logEntry);
         }
 
         function testSignalAbort() {
+            if (!conditionalUiController) {
+                addLogEntry('✗ Error: conditionalUiController is not initialized');
+                return;
+            }
+            
             addLogEntry('Testing Signal Abort functionality...');
             
             // Check if signal is already aborted
@@ -348,6 +359,10 @@
 
         // Initialize signal status on page load
         $(document).ready(function() {
+            if (!conditionalUiController) {
+                addLogEntry('✗ Error: conditionalUiController is not initialized');
+                return;
+            }
             updateSignalStatus();
             addLogEntry('Signal API test interface initialized');
             addLogEntry('Signal state: ' + (conditionalUiController.signal.aborted ? 'aborted' : 'active'));
