@@ -153,24 +153,24 @@
                     return
                 }
                 delete options.statusCode;
-                // 指定したオプションを追加
-                if ($('input[name=authenticatorSelection-enable]').prop('checked')) {
+                // 指定したオプションを追加（登録用）
+                if ($('input[name=reg-authenticatorSelection-enable]').prop('checked')) {
                     options.authenticatorSelection = {};
-                    if ($('input[name=authenticatorAttachment-enable]').prop('checked')) {
-                        options.authenticatorSelection.authenticatorAttachment = $('[name=authenticatorAttachment]').val();
+                    if ($('input[name=reg-authenticatorAttachment-enable]').prop('checked')) {
+                        options.authenticatorSelection.authenticatorAttachment = $('[name=reg-authenticatorAttachment]').val();
                     }
-                    if ($('input[name=requireResidentKey-enable]').prop('checked')) {
-                        options.authenticatorSelection.requireResidentKey = $('[name=requireResidentKey]').val() == 'true';
+                    if ($('input[name=reg-requireResidentKey-enable]').prop('checked')) {
+                        options.authenticatorSelection.requireResidentKey = $('[name=reg-requireResidentKey]').val() == 'true';
                     }
-                    if ($('input[name=residentKey-enable]').prop('checked')) {
-                        options.authenticatorSelection.residentKey = $('[name=residentKey]').val();
+                    if ($('input[name=reg-residentKey-enable]').prop('checked')) {
+                        options.authenticatorSelection.residentKey = $('[name=reg-residentKey]').val();
                     }
-                    if ($('input[name=userVerification-enable]').prop('checked')) {
-                        options.authenticatorSelection.userVerification = $('[name=userVerification]').val();
+                    if ($('input[name=reg-userVerification-enable]').prop('checked')) {
+                        options.authenticatorSelection.userVerification = $('[name=reg-userVerification]').val();
                     }
                 }
-                if ($('input[name=attestation-enable]').prop('checked')) {
-                    options.attestation = $('[name=attestation]').val();
+                if ($('input[name=reg-attestation-enable]').prop('checked')) {
+                    options.attestation = $('[name=reg-attestation]').val();
                 }
                 const dumpMsg = JSON.stringify(options, null, "   ");
                 const dumpHtmlString = dumpMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
@@ -234,6 +234,10 @@
                     })
                 })
                 delete options.statusCode;
+                // 指定したオプションを追加（認証用）
+                if ($('input[name=auth-userVerification-enable]').prop('checked')) {
+                    options.userVerification = $('[name=auth-userVerification]').val();
+                }
                 const dumpMsg = JSON.stringify(options, null, "   ");
                 const dumpHtmlString = dumpMsg.replace(/ /g, "&ensp;").replace(/\n/g, "<br>");
                 $('#dumpOptions').html(dumpHtmlString);
@@ -311,41 +315,42 @@
 
         <div class="card">
             <H2>FIDOテスト</H2>
-            <div id="option_picker" class="options-grid">
+            <H3>登録オプション (Registration Options for create)</H3>
+            <div id="registration_option_picker" class="options-grid">
                 <div class="editor indent-0 form-group">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="authenticatorSelection-enable" name="authenticatorSelection-enable"
+                        <input type="checkbox" id="reg-authenticatorSelection-enable" name="reg-authenticatorSelection-enable"
                             checked>
-                        <label for="authenticatorSelection-enable">authenticatorSelection</label>
+                        <label for="reg-authenticatorSelection-enable">authenticatorSelection</label>
                     </div>
                 </div>
                 <div class="editor indent-1 form-group">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="authenticatorAttachment-enable" name="authenticatorAttachment-enable"
+                        <input type="checkbox" id="reg-authenticatorAttachment-enable" name="reg-authenticatorAttachment-enable"
                             checked>
-                        <label for="authenticatorAttachment-enable">authenticatorAttachment</label>
+                        <label for="reg-authenticatorAttachment-enable">authenticatorAttachment</label>
                     </div>
-                    <select name="authenticatorAttachment">
+                    <select name="reg-authenticatorAttachment">
                         <option value="platform">platform</option>
                         <option value="cross-platform">cross-platform</option>
                     </select>
                 </div>
                 <div class="editor indent-1 form-group">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="requireResidentKey-enable" name="requireResidentKey-enable" checked>
-                        <label for="requireResidentKey-enable">requireResidentKey</label>
+                        <input type="checkbox" id="reg-requireResidentKey-enable" name="reg-requireResidentKey-enable" checked>
+                        <label for="reg-requireResidentKey-enable">requireResidentKey</label>
                     </div>
-                    <select name="requireResidentKey">
+                    <select name="reg-requireResidentKey">
                         <option value="true">true</option>
                         <option value="false">false</option>
                     </select>
                 </div>
                 <div class="editor indent-1 form-group">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="residentKey-enable" name="residentKey-enable">
-                        <label for="residentKey-enable">residentKey</label>
+                        <input type="checkbox" id="reg-residentKey-enable" name="reg-residentKey-enable">
+                        <label for="reg-residentKey-enable">residentKey</label>
                     </div>
-                    <select name="residentKey">
+                    <select name="reg-residentKey">
                         <option value="required">required</option>
                         <option value="preferred">preferred</option>
                         <option value="discouraged">discouraged</option>
@@ -353,10 +358,10 @@
                 </div>
                 <div class="editor indent-1 form-group">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="userVerification-enable" name="userVerification-enable" checked>
-                        <label for="userVerification-enable">userVerification</label>
+                        <input type="checkbox" id="reg-userVerification-enable" name="reg-userVerification-enable" checked>
+                        <label for="reg-userVerification-enable">userVerification</label>
                     </div>
-                    <select name="userVerification">
+                    <select name="reg-userVerification">
                         <option value="required">required</option>
                         <option value="preferred">preferred</option>
                         <option value="discouraged">discouraged</option>
@@ -364,14 +369,29 @@
                 </div>
                 <div class="editor indent-0 form-group">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="attestation-enable" name="attestation-enable" checked>
-                        <label for="attestation-enable">attestation</label>
+                        <input type="checkbox" id="reg-attestation-enable" name="reg-attestation-enable" checked>
+                        <label for="reg-attestation-enable">attestation</label>
                     </div>
-                    <select name="attestation">
+                    <select name="reg-attestation">
                         <option value="direct">direct</option>
                         <option value="indirect">indirect</option>
                         <option value="enterprise">enterprise</option>
                         <option value="none">none</option>
+                    </select>
+                </div>
+            </div>
+
+            <H3>認証オプション (Authentication Options for get)</H3>
+            <div id="authentication_option_picker" class="options-grid">
+                <div class="editor indent-0 form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="auth-userVerification-enable" name="auth-userVerification-enable" checked>
+                        <label for="auth-userVerification-enable">userVerification</label>
+                    </div>
+                    <select name="auth-userVerification">
+                        <option value="required">required</option>
+                        <option value="preferred">preferred</option>
+                        <option value="discouraged">discouraged</option>
                     </select>
                 </div>
             </div>
