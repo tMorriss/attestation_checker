@@ -275,6 +275,84 @@
             });
         }
 
+        // Signal API test functions
+        function updateSignalStatus() {
+            const isAborted = conditionalUiController.signal.aborted;
+            $('#signalAborted').text(isAborted ? 'TRUE' : 'FALSE')
+                .removeClass('text-success text-error')
+                .addClass(isAborted ? 'text-error' : 'text-success');
+            
+            if (isAborted && conditionalUiController.signal.reason) {
+                $('#signalReason').text(conditionalUiController.signal.reason);
+            } else {
+                $('#signalReason').text('-');
+            }
+        }
+
+        function addLogEntry(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            $('#signalTestLog').prepend(logEntry);
+        }
+
+        function testSignalAbort() {
+            addLogEntry('Testing Signal Abort functionality...');
+            
+            // Check if signal is already aborted
+            if (conditionalUiController.signal.aborted) {
+                addLogEntry('⚠️  Warning: Signal is already aborted');
+                addLogEntry(`Abort reason: ${conditionalUiController.signal.reason}`);
+            } else {
+                addLogEntry('✓ Signal is not aborted (ready for testing)');
+            }
+
+            // Test abort functionality
+            try {
+                addLogEntry('Calling conditionalUiController.abort()...');
+                conditionalUiController.abort('ManualTestAbort');
+                addLogEntry('✓ abort() called successfully');
+                
+                // Verify signal state
+                if (conditionalUiController.signal.aborted) {
+                    addLogEntry('✓ Signal is now aborted');
+                    addLogEntry(`✓ Abort reason: ${conditionalUiController.signal.reason}`);
+                } else {
+                    addLogEntry('✗ Error: Signal should be aborted but is not');
+                }
+            } catch (e) {
+                addLogEntry(`✗ Error during abort: ${e.message}`);
+            }
+
+            updateSignalStatus();
+        }
+
+        function resetSignalStatus() {
+            addLogEntry('Note: AbortController cannot be reset. Use browser refresh to create a new controller.');
+            addLogEntry('Current signal state will remain aborted until page reload.');
+            updateSignalStatus();
+        }
+
+        // Update signal status when authentication functions are called
+        const originalAuthenticate = authenticate;
+        authenticate = function(isConditionalUI) {
+            if (isConditionalUI) {
+                $('#conditionalUIRunning').text('TRUE').removeClass('text-error').addClass('text-success');
+                addLogEntry('Conditional UI authentication started');
+            } else {
+                addLogEntry('Manual authentication triggered - aborting conditional UI');
+                $('#conditionalUIRunning').text('FALSE').removeClass('text-success').addClass('text-error');
+            }
+            updateSignalStatus();
+            return originalAuthenticate(isConditionalUI);
+        };
+
+        // Initialize signal status on page load
+        $(document).ready(function() {
+            updateSignalStatus();
+            addLogEntry('Signal API test interface initialized');
+            addLogEntry('Signal state: ' + (conditionalUiController.signal.aborted ? 'aborted' : 'active'));
+        });
+
     </script>
 </head>
 
@@ -399,6 +477,40 @@
                 <div id="dumpOptions"></div>
             </details>
             <div id="resultMsg"></div>
+        </div>
+
+        <div class="card">
+            <H2>Signal API テスト (Signal API Test)</H2>
+            <p>このセクションでは、AbortControllerのsignal APIの動作をテストできます。</p>
+            <p>This section allows you to test the behavior of the AbortController's signal API.</p>
+            
+            <H3>Signal Status</H3>
+            <table class="status-table">
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Signal Aborted</td>
+                    <td><span id="signalAborted" class="status-indicator">FALSE</span></td>
+                </tr>
+                <tr>
+                    <td>Signal Reason</td>
+                    <td><span id="signalReason">-</span></td>
+                </tr>
+                <tr>
+                    <td>Conditional UI Running</td>
+                    <td><span id="conditionalUIRunning" class="status-indicator">FALSE</span></td>
+                </tr>
+            </table>
+
+            <div class="btn-group" style="margin-top: 1rem;">
+                <button onclick="testSignalAbort()">Signal Abortをテスト (Test Signal Abort)</button>
+                <button onclick="resetSignalStatus()">ステータスをリセット (Reset Status)</button>
+            </div>
+
+            <H3>Test Log</H3>
+            <div id="signalTestLog" style="padding: 1rem; background: #f5f5f5; border-radius: 4px; min-height: 100px; font-family: monospace; font-size: 0.9em;"></div>
         </div>
 
         <div class="card">
