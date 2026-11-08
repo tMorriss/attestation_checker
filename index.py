@@ -2,12 +2,12 @@ import json
 import os
 import sys
 
+from exceptions import FormatException, UnsupportedException
 from flask import Flask, render_template, request
 
-from exceptions import FormatException, UnsupportedException
 from lib.assertion import Assertion
-from lib.utils import generate_id
 from lib.attestationResponse import AttestationResponse
+from lib.utils import generate_id
 
 app = Flask(__name__, static_url_path='/fido/static', static_folder='static')
 
@@ -15,8 +15,12 @@ RP_ID = os.environ['RP_ID'] if 'RP_ID' in os.environ.keys() else 'localhost'
 CREDENTIAL_TIMEOUT_MICROSECOND = 30000
 ALG_LIST = {'ES256': -7, 'RS256': -257}
 SUCCESS_CODE = "2000"
-ACCEPT_CHS = ['Sec-CH-UA', 'Sec-CH-UA-Arch', 'Sec-CH-UA-Bitness', 'Sec-CH-UA-Full-Version-List', 'Sec-CH-UA-Full-Version', 'Sec-CH-UA-Mobile', 'Sec-CH-UA-Model', 'Sec-CH-UA-Platform',
-              'Sec-CH-UA-Platform-Version', 'Sec-CH-Prefers-Reduced-Motion', 'Sec-CH-Prefers-Color-Scheme', 'Device-Memory', 'DPR', 'Width', 'Viewport-Width', 'Save-Data', 'Downlink', 'ECT', 'RTT']
+ACCEPT_CHS = [
+    'Sec-CH-UA', 'Sec-CH-UA-Arch', 'Sec-CH-UA-Bitness', 'Sec-CH-UA-Full-Version-List',
+    'Sec-CH-UA-Full-Version', 'Sec-CH-UA-Mobile', 'Sec-CH-UA-Model', 'Sec-CH-UA-Platform',
+    'Sec-CH-UA-Platform-Version', 'Sec-CH-Prefers-Reduced-Motion', 'Sec-CH-Prefers-Color-Scheme',
+    'Device-Memory', 'DPR', 'Width', 'Viewport-Width', 'Save-Data', 'Downlink', 'ECT', 'RTT'
+]
 
 
 @app.route('/')
@@ -63,7 +67,7 @@ def index():
                            )
 
 
-@ app.route('/attestation/options', methods=["POST"])
+@app.route('/attestation/options', methods=["POST"])
 def attestation_options():
     challenge = generate_id(16)
     options = {
@@ -100,7 +104,7 @@ def attestation_options():
     return json.dumps(options)
 
 
-@ app.route('/attestation/result', methods=["POST"])
+@app.route('/attestation/result', methods=["POST"])
 def attestation_result():
     try:
         attestation = request.json
@@ -129,7 +133,7 @@ def attestation_result():
         })
 
 
-@ app.route('/assertion/options', methods=["POST"])
+@app.route('/assertion/options', methods=["POST"])
 def assertion_options():
     challenge = generate_id(16)
 
@@ -141,7 +145,7 @@ def assertion_options():
     })
 
 
-@ app.route('/assertion/result', methods=["POST"])
+@app.route('/assertion/result', methods=["POST"])
 def assertion_result():
     try:
         assertion = Assertion(request.json)

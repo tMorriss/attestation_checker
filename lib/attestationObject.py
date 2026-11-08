@@ -1,5 +1,4 @@
 import cbor2
-
 from exceptions import FormatException, UnsupportedException
 from lib.attestationStatement import AndroidSafetyNet, Apple, NoneFmt, Packed, Tpm
 from lib.authData import AuthData
