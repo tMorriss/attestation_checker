@@ -1,6 +1,6 @@
 from exceptions import FormatException
-from lib.clientData import ClientData
 from lib.authData import AuthData
+from lib.clientData import ClientData
 from lib.utils import base64_url_decode
 
 AUTHENTICATOR_DATA = 'authenticatorData'

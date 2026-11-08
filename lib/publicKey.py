@@ -1,5 +1,4 @@
 import cbor2
-
 from exceptions import FormatException, UnsupportedException
 
 ALG_LIST = {'ES256': -7, 'RS256': -257}
