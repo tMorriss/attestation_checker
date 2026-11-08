@@ -4,7 +4,6 @@ import sys
 
 from exceptions import FormatException, UnsupportedException
 from flask import Flask, render_template, request
-
 from lib.assertion import Assertion
 from lib.attestationResponse import AttestationResponse
 from lib.utils import generate_id
