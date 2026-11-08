@@ -1,0 +1,10 @@
+[Unit]
+Description=attestation_checker Pod
+After=network-online.target
+
+[Pod]
+PodName=attestation-checker-pod
+PublishPort=8083:8080
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=attestation_checker Container
+After=network-online.target attestation-checker-pod.service
+
+[Container]
+ContainerName=attestation_checker
+Image=localhost/attestation_checker:${BUILD_TAG}
+Pod=attestation-checker.pod
+Environment=RP_ID=${RP_ID}
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
