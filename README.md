@@ -2,7 +2,7 @@
 
 ## Jenkins / Quadlet デプロイ
 
-Jenkins から `build/jenkins.sh` を実行すると、Podman イメージをビルドし、ユーザー単位の systemd Quadlet でアプリケーションをデプロイします。Flask はコンテナ内の `8080` 番ポートで待ち受け、ホストの `8083` 番ポートに公開します。
+Jenkins から `build/jenkins.sh` を実行すると、Podman イメージをビルドし、ユーザー単位の systemd Quadlet でアプリケーションをデプロイします。Gunicorn が Flask アプリをコンテナ内の `8080` 番ポートで配信し、ホストの `8083` 番ポートに公開します。
 
 ### Jenkins 実行環境
 
